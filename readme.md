@@ -13,3 +13,6 @@ Made with mcsrvstat's API
 - [ ] Multi langage
 - [ ] Completly Responsive 
 - [ ] Hook Server langage 
+
+
+readme me for bacon people and website for baguette people (atm)

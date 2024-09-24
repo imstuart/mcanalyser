@@ -4,8 +4,12 @@ const minecraftUtil = require('minecraft-server-util');
 const NodeCache = require('node-cache');
 const whois = require('whois');
 const psl = require('psl');
-
+const path = require('path');
 const app = express();
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 app.use(cors());
 // get le cache pour trouver le nombre de joueur moyen mais a refaire 
 const playerCache = new NodeCache({ stdTTL: 86400, checkperiod: 120 });

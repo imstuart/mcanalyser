@@ -1,124 +1,124 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analyseur de Serveurs Minecraft</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.2/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        body.dark {
-            background-color: #1a202c; 
-            color: #cbd5e0; 
-        }
-        .dark .bg-gray-100 {
-            background-color: #2d3748; 
-        }
-        .dark .border-gray-300 {
-            border-color: #4a5568; 
-        }
-        .dark .bg-blue-500 {
-            background-color: #4299e1;
-        }
-        .dark input {
-            color: #000; 
-        }
-        .dark #toggleDarkMode {
-            color: #000; 
-        }
-    </style>
-</head>
-<body class="bg-gray-100">
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Analyseur de Serveurs Minecraft</title>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.2/dist/tailwind.min.css" rel="stylesheet">
+        <style>
+            body.dark {
+                background-color: #1a202c; 
+                color: #cbd5e0; 
+            }
+            .dark .bg-gray-100 {
+                background-color: #2d3748; 
+            }
+            .dark .border-gray-300 {
+                border-color: #4a5568; 
+            }
+            .dark .bg-blue-500 {
+                background-color: #4299e1;
+            }
+            .dark input {
+                color: #000; 
+            }
+            .dark #toggleDarkMode {
+                color: #000; 
+            }
+        </style>
+    </head>
+    <body class="bg-gray-100">
 
-    <div class="container mx-auto mt-10">
-        <button id="toggleDarkMode" class="absolute top-4 left-4 bg-gray-300 p-2 rounded">Mode Sombre</button>
-        <h1 class="text-4xl font-bold text-center">Analyseur de Serveurs Minecraft</h1>
-        <div class="mt-8 flex justify-center">
-            <input type="text" id="serverIp" class="p-2 border border-gray-300 rounded" placeholder="Entrez l'IP ou le domaine du serveur">
-            <button id="analyzeBtn" class="ml-4 bg-blue-500 text-white p-2 rounded">Obtenir Infos</button>
+        <div class="container mx-auto mt-10">
+            <button id="toggleDarkMode" class="absolute top-4 left-4 bg-gray-300 p-2 rounded">Mode Sombre</button>
+            <h1 class="text-4xl font-bold text-center">Analyseur de Serveurs Minecraft</h1>
+            <div class="mt-8 flex justify-center">
+                <input type="text" id="serverIp" class="p-2 border border-gray-300 rounded" placeholder="Entrez l'IP ou le domaine du serveur">
+                <button id="analyzeBtn" class="ml-4 bg-blue-500 text-white p-2 rounded">Obtenir Infos</button>
+            </div>
+            <div id="serverInfo" class="mt-10 text-center">
+                <h2 class="text-2xl font-semibold">Résultats :</h2>
+                <div id="infoContent" class="mt-2"></div>
+            </div>
         </div>
-        <div id="serverInfo" class="mt-10 text-center">
-            <h2 class="text-2xl font-semibold">Résultats :</h2>
-            <div id="infoContent" class="mt-2"></div>
-        </div>
-    </div>
-    <footer class="bg-gray-800 text-white text-center p-4 mt-10">
-        <p> MCAnalyser utilise l'api de mcsrvstat. Tous droits réservés.</p>
-    </footer>
-    <script>
-        function formatDateToDDMMYYYY(dateString) {
-            const date = new Date(dateString);
-            const day = String(date.getUTCDate()).padStart(2, '0');
-            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-            const year = date.getUTCFullYear();
-            return `${day}/${month}/${year}`;
-        }
-        const toggleDarkModeButton = document.getElementById('toggleDarkMode');
-        const body = document.body;
+        <footer class="bg-gray-800 text-white text-center p-4 mt-10">
+            <p> MCAnalyser utilise l'api de mcsrvstat. Tous droits réservés.</p>
+        </footer>
+        <script>
+            function formatDateToDDMMYYYY(dateString) {
+                const date = new Date(dateString);
+                const day = String(date.getUTCDate()).padStart(2, '0');
+                const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+                const year = date.getUTCFullYear();
+                return `${day}/${month}/${year}`;
+            }
+            const toggleDarkModeButton = document.getElementById('toggleDarkMode');
+            const body = document.body;
 
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            body.classList.add('dark');
-        }
-
-        toggleDarkModeButton.addEventListener('click', () => {
-            body.classList.toggle('dark');
-            toggleDarkModeButton.textContent = body.classList.contains('dark') ? 'Mode Clair' : 'Mode Sombre';
-        });
-
-        document.getElementById('analyzeBtn').addEventListener('click', function () {
-            const serverIp = document.getElementById('serverIp').value;
-            if (!serverIp) {
-                alert("Veuillez entrer une IP ou un nom de domaine.");
-                return;
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                body.classList.add('dark');
             }
 
-            fetch(`https://api.mcsrvstat.us/2/${serverIp}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (!data || !data.online) {
-                        document.getElementById('infoContent').innerHTML = "Le serveur est hors ligne ou introuvable.";
-                        return;
-                    }
+            toggleDarkModeButton.addEventListener('click', () => {
+                body.classList.toggle('dark');
+                toggleDarkModeButton.textContent = body.classList.contains('dark') ? 'Mode Clair' : 'Mode Sombre';
+            });
 
-                    const slots = data.players.max; 
-                    const players = data.players.online; 
-                    const iconUrl = data.icon || ''; 
-                    const motd = data.motd.clean.join(' ') || 'Indisponible'; // MOTD (mais non display)
+            document.getElementById('analyzeBtn').addEventListener('click', function () {
+                const serverIp = document.getElementById('serverIp').value;
+                if (!serverIp) {
+                    alert("Veuillez entrer une IP ou un nom de domaine.");
+                    return;
+                }
 
-                    const serverInfoHtml = `
-                        <div class="flex justify-center mb-4">
-                            <img src="${iconUrl}" alt="Icône du Serveur" class="w-16 h-16 rounded" />
-                        </div>
-                        <p><strong>Adresse du Serveur :</strong> ${data.hostname || serverIp}</p>
-                        <p><strong>Joueurs en ligne :</strong> ${players} / ${slots}</p>
-                        <p><strong>Version :</strong> ${data.version}</p>
-                        <p><strong>Langue du Serveur :</strong> ${data.language || 'Non spécifié'}</p>
-                        
-                    `;
-                    document.getElementById('infoContent').innerHTML = serverInfoHtml;
+                fetch(`https://api.mcsrvstat.us/2/${serverIp}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data || !data.online) {
+                            document.getElementById('infoContent').innerHTML = "Le serveur est hors ligne ou introuvable.";
+                            return;
+                        }
 
-                    return fetch(`http://localhost:3000/whois/${serverIp}`);
-                })
-                .then(response => {
-                    if (response && response.ok) {
-                        return response.json();
-                    }
-                    throw new Error('Erreur lors de la récupération des données Whois.');
-                })
-                .then(whoisData => {
-                    const creationDate = whoisData.creationDate ? formatDateToDDMMYYYY(whoisData.creationDate) : 'Indisponible';
-                    const registrar = whoisData.registrar || 'Indisponible';
+                        const slots = data.players.max; 
+                        const players = data.players.online; 
+                        const iconUrl = data.icon || ''; 
+                        const motd = data.motd.clean.join(' ') || 'Indisponible'; // MOTD (mais non display)
 
-                    const whoisInfoHtml = `
-                        <p><strong>Date de création :</strong> ${creationDate}</p>
-                        <p><strong>Hébergeur :</strong> ${registrar}</p>
-                    `;
-                    document.getElementById('infoContent').innerHTML += whoisInfoHtml;
-                })
-                .catch(error => {
-                    document.getElementById('infoContent').innerHTML += "<p>Erreur lors de la récupération des données Whois.</p>";
-                    console.error("Erreur : ", error);
-                });
-        });
-    </script>
-</body>
-</html>
+                        const serverInfoHtml = `
+                            <div class="flex justify-center mb-4">
+                                <img src="${iconUrl}" alt="Icône du Serveur" class="w-16 h-16 rounded" />
+                            </div>
+                            <p><strong>Adresse du Serveur :</strong> ${data.hostname || serverIp}</p>
+                            <p><strong>Joueurs en ligne :</strong> ${players} / ${slots}</p>
+                            <p><strong>Version :</strong> ${data.version}</p>
+                            <p><strong>Langue du Serveur :</strong> ${data.language || 'Non spécifié'}</p>
+                            
+                        `;
+                        document.getElementById('infoContent').innerHTML = serverInfoHtml;
+
+                        return fetch(`http://localhost:3000/whois/${serverIp}`);
+                    })
+                    .then(response => {
+                        if (response && response.ok) {
+                            return response.json();
+                        }
+                        throw new Error('Erreur lors de la récupération des données Whois.');
+                    })
+                    .then(whoisData => {
+                        const creationDate = whoisData.creationDate ? formatDateToDDMMYYYY(whoisData.creationDate) : 'Indisponible';
+                        const registrar = whoisData.registrar || 'Indisponible';
+
+                        const whoisInfoHtml = `
+                            <p><strong>Date de création :</strong> ${creationDate}</p>
+                            <p><strong>Hébergeur :</strong> ${registrar}</p>
+                        `;
+                        document.getElementById('infoContent').innerHTML += whoisInfoHtml;
+                    })
+                    .catch(error => {
+                        document.getElementById('infoContent').innerHTML += "<p>Erreur lors de la récupération des données Whois.</p>";
+                        console.error("Erreur : ", error);
+                    });
+            });
+        </script>
+    </body>
+    </html>
